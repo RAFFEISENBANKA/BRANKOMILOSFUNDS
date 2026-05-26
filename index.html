@@ -1,11 +1,22 @@
 import time
 import sys
 import os
+import textwrap
 
-# Linisin ang screen para maging full screen ang display
+# Linisin ang screen
 os.system('cls' if os.name == 'nt' else 'clear')
 
-# Mga data sa wikang Croatian
+# ANSI Color Codes para sa Terminal Layout (Black Background)
+BG_BLACK = "\033[40m"
+TEXT_WHITE = "\033[97m"
+TEXT_RED = "\033[91m"
+TEXT_BOLD = "\033[1m"
+RESET = "\033[0m"
+
+# Standard width para sa mobile screen terminal layout
+SCREEN_WIDTH = 45
+
+# Data sa wikang Croatian
 available_funds = "26.380"
 cost = "1.000"
 error_message = (
@@ -15,41 +26,66 @@ error_message = (
     "jednu transakciju. Imate samo 3 sata za dovršetak."
 )
 
-# --- FULL SCREEN CELLPHONE INTERFACE LAYOUT ---
-print("=" * 45)
-print("             SREDIŠNJI BANKOVNI SUSTAV             ")
-print("=" * 45)
-print("\n" * 2)  # Space sa itaas
+# Ilapat ang itim na background sa buong display block
+sys.stdout.write(BG_BLACK)
 
-# Display ng Funds at Cost
-print(f"   Raspoloživa sredstva (Available Funds):")
-print(f"   👉 € {available_funds}")
-print("-" * 45)
-print(f"   Trošak transakcije (Cost):")
-print(f"   👉 € {cost}")
-print("\n" * 2)  # Space sa gitna
+# --- HEADER SECTION ---
+print("\n" + "=" * SCREEN_WIDTH)
+header_text = f"{TEXT_BOLD}{TEXT_WHITE}SREDIŠNJI BANKOVNI SUSTAV{RESET}{BG_BLACK}"
+print(header_text.center(SCREEN_WIDTH + 15)) # May offset para sa color codes
+print("=" * SCREEN_WIDTH)
+print("\n")
 
-# Display ng System Alert Box
-print(" [🔴 UPOZORENJE / SYSTEM ALERT] ")
-print(" " + "-" * 43)
-# Awtomatikong bababa ang linya ng text kapag mahaba para kasya sa screen ng cp
-for line in [error_message[i:i+40] for i in range(0, len(error_message), 40)]:
-    print(f" | {line.ljust(40)} |")
-print(" " + "-" * 43)
-print("\n" * 3)  # Space bago ang timer sa ibaba
+# --- FUNDS & COST SECTION ---
+funds_title = f"{TEXT_WHITE}Raspoloživa sredstva (Available Funds):{RESET}{BG_BLACK}"
+funds_val = f"{TEXT_BOLD}{TEXT_WHITE}€ {available_funds}{RESET}{BG_BLACK}"
+print(funds_title.center(SCREEN_WIDTH + 15))
+print(funds_val.center(SCREEN_WIDTH + 15))
 
-# Timer function na nakapwesto sa pinaka-ibaba
+print("-" * SCREEN_WIDTH)
+
+cost_title = f"{TEXT_WHITE}Trošak transakcije (Cost):{RESET}{BG_BLACK}"
+cost_val = f"{TEXT_BOLD}{TEXT_WHITE}€ {cost}{RESET}{BG_BLACK}"
+print(cost_title.center(SCREEN_WIDTH + 15))
+print(cost_val.center(SCREEN_WIDTH + 15))
+print("\n" * 2)
+
+# --- RED ALERT SECTION ---
+alert_title = f"{TEXT_BOLD}{TEXT_RED}[🔴 UPOZORENJE / SYSTEM ALERT]{RESET}{BG_BLACK}"
+print(alert_title.center(SCREEN_WIDTH + 15))
+print(" " + "-" * (SCREEN_WIDTH - 2))
+
+# Awtomatikong pag-wrap ng text at paggitna (Centered paragraph wrapping)
+wrapped_lines = textwrap.wrap(error_message, width=38)
+for line in wrapped_lines:
+    centered_line = line.center(38)
+    print(f" | {TEXT_WHITE}{centered_line}{RESET}{BG_BLACK} |")
+
+print(" " + "-" * (SCREEN_WIDTH - 2))
+print("\n" * 2)
+
+# --- COUNTDOWN TIMER SECTION ---
+timer_title = f"{TEXT_RED}VRIJEME ZA DOVRŠETAK (TIME REMAINING):{RESET}{BG_BLACK}"
+print(timer_title.center(SCREEN_WIDTH + 15))
+
 seconds = 10800 
 try:
-    print(" VRIJEME ZA DOVRŠETAK (TIME REMAINING):")
     while seconds > 0:
         hours = seconds // 3600
         mins = (seconds % 3600) // 60
         secs = seconds % 60
-        # Nag-a-update sa iisang linya lang sa ibaba ng screen ng cp
-        sys.stdout.write(f"\r ⏳ Preostalo: {hours:02d}:{mins:02d}:{secs:02d} ")
+        
+        # Pag-update ng timer sa iisang linya at pananatilihin itong naka-center
+        timer_text = f"⏳ Preostalo: {hours:02d}:{mins:02d}:{secs:02d}"
+        centered_timer = timer_text.center(SCREEN_WIDTH)
+        
+        sys.stdout.write(f"\r{TEXT_WHITE}{centered_timer}{RESET}{BG_BLACK}")
         sys.stdout.flush()
         time.sleep(1)
         seconds -= 1
 except KeyboardInterrupt:
-    print("\n\n [!] Program zaustavljen.")
+    print(f"\n\n{TEXT_RED} [!] Program zaustavljen.{RESET}")
+
+# I-reset ang kulay ng terminal pagkatapos mag-close ng code
+sys.stdout.write(RESET)
+print()
