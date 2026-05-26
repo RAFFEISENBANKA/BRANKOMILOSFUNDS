@@ -1,91 +1,228 @@
-import time
-import sys
-import os
-import textwrap
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Središnji Bankovni Sustav</title>
+    <style>
+        /* Setup para sa Black Background at Buong Screen ng Mobile */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-# Linisin ang screen
-os.system('cls' if os.name == 'nt' else 'clear')
+        /* Maayos at Malaking Header */
+        header {
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
 
-# ANSI Color Codes para sa Terminal Layout (Black Background)
-BG_BLACK = "\033[40m"
-TEXT_WHITE = "\033[97m"
-TEXT_RED = "\033[91m"
-TEXT_BOLD = "\033[1m"
-RESET = "\033[0m"
+        header h1 {
+            font-size: 26px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
 
-# Standard width para sa mobile screen terminal layout
-SCREEN_WIDTH = 45
+        /* Live Croatian Time Section sa Itaas */
+        .croatia-time-box {
+            font-size: 15px;
+            color: #ff3333;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-# Data sa wikang Croatian
-available_funds = "26.380"
-cost = "1.000"
-error_message = (
-    "Nije moguće nastaviti jer je limit banke nedovoljan. Ako nastavite, "
-    "vaša sredstva bi mogla biti blokirana. Pošaljite zahtjev skrbniku za "
-    "nadogradnju računa i osiguranje ovih sredstava kako biste mogli izvršiti "
-    "jednu transakciju. Imate samo 3 sata za dovršetak."
-)
+        #current-time {
+            color: #ffffff;
+            font-size: 18px;
+            display: block;
+            margin-top: 5px;
+        }
 
-# Ilapat ang itim na background sa buong display block
-sys.stdout.write(BG_BLACK)
+        /* Kontenis ng Pera at Gastos (Centered at Malaki) */
+        .financial-info {
+            margin-bottom: 25px;
+        }
 
-# --- HEADER SECTION ---
-print("\n" + "=" * SCREEN_WIDTH)
-header_text = f"{TEXT_BOLD}{TEXT_WHITE}SREDIŠNJI BANKOVNI SUSTAV{RESET}{BG_BLACK}"
-print(header_text.center(SCREEN_WIDTH + 15)) # May offset para sa color codes
-print("=" * SCREEN_WIDTH)
-print("\n")
+        .label {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
 
-# --- FUNDS & COST SECTION ---
-funds_title = f"{TEXT_WHITE}Raspoloživa sredstva (Available Funds):{RESET}{BG_BLACK}"
-funds_val = f"{TEXT_BOLD}{TEXT_WHITE}€ {available_funds}{RESET}{BG_BLACK}"
-print(funds_title.center(SCREEN_WIDTH + 15))
-print(funds_val.center(SCREEN_WIDTH + 15))
+        .amount {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
 
-print("-" * SCREEN_WIDTH)
+        hr {
+            border: 0;
+            border-top: 1px solid #333333;
+            margin: 20px auto;
+            width: 85%;
+        }
 
-cost_title = f"{TEXT_WHITE}Trošak transakcije (Cost):{RESET}{BG_BLACK}"
-cost_val = f"{TEXT_BOLD}{TEXT_WHITE}€ {cost}{RESET}{BG_BLACK}"
-print(cost_title.center(SCREEN_WIDTH + 15))
-print(cost_val.center(SCREEN_WIDTH + 15))
-print("\n" * 2)
+        /* Red Alert Box para sa Croatian Message */
+        .alert-container {
+            border: 2px solid #ff3333;
+            border-radius: 8px;
+            padding: 22px;
+            margin: 20px auto;
+            max-width: 420px;
+            background-color: #0a0000;
+            box-sizing: border-box;
+        }
 
-# --- RED ALERT SECTION ---
-alert_title = f"{TEXT_BOLD}{TEXT_RED}[🔴 UPOZORENJE / SYSTEM ALERT]{RESET}{BG_BLACK}"
-print(alert_title.center(SCREEN_WIDTH + 15))
-print(" " + "-" * (SCREEN_WIDTH - 2))
+        .alert-title {
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 20px;
+            text-transform: uppercase;
+            margin-top: 0;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
 
-# Awtomatikong pag-wrap ng text at paggitna (Centered paragraph wrapping)
-wrapped_lines = textwrap.wrap(error_message, width=38)
-for line in wrapped_lines:
-    centered_line = line.center(38)
-    print(f" | {TEXT_WHITE}{centered_line}{RESET}{BG_BLACK} |")
+        .alert-text {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #ffffff;
+            text-align: center;
+        }
 
-print(" " + "-" * (SCREEN_WIDTH - 2))
-print("\n" * 2)
+        /* Countdown Timer sa Ibaba */
+        .timer-container {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
 
-# --- COUNTDOWN TIMER SECTION ---
-timer_title = f"{TEXT_RED}VRIJEME ZA DOVRŠETAK (TIME REMAINING):{RESET}{BG_BLACK}"
-print(timer_title.center(SCREEN_WIDTH + 15))
+        .timer-title {
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
 
-seconds = 10800 
-try:
-    while seconds > 0:
-        hours = seconds // 3600
-        mins = (seconds % 3600) // 60
-        secs = seconds % 60
-        
-        # Pag-update ng timer sa iisang linya at pananatilihin itong naka-center
-        timer_text = f"⏳ Preostalo: {hours:02d}:{mins:02d}:{secs:02d}"
-        centered_timer = timer_text.center(SCREEN_WIDTH)
-        
-        sys.stdout.write(f"\r{TEXT_WHITE}{centered_timer}{RESET}{BG_BLACK}")
-        sys.stdout.flush()
-        time.sleep(1)
-        seconds -= 1
-except KeyboardInterrupt:
-    print(f"\n\n{TEXT_RED} [!] Program zaustavljen.{RESET}")
+        #timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
 
-# I-reset ang kulay ng terminal pagkatapos mag-close ng code
-sys.stdout.write(RESET)
-print()
+    <div>
+        <!-- HEADER SECTION -->
+        <header>
+            <h1>Središnji Bankovni Sustav</h1>
+        </header>
+
+        <!-- CROATIAN LIVE TIME (Hrvatsko Vrijeme) -->
+        <div class="croatia-time-box">
+            Lokalno vrijeme (Croatia Time):
+            <span id="current-time">Učitavanje...</span>
+        </div>
+
+        <!-- FUNDS & COST SECTION -->
+        <div class="financial-info">
+            <div class="label">Raspoloživa sredstva (Available Funds)</div>
+            <div class="amount">€ 26.380</div>
+            
+            <hr>
+            
+            <div class="label">Trošak transakcije (Cost)</div>
+            <div class="amount">€ 1.000</div>
+        </div>
+
+        <!-- RED ALERT SECTION -->
+        <div class="alert-container">
+            <div class="alert-title">⚠️ Upozorenje / System Alert</div>
+            <div class="alert-text">
+                Nije moguće nastaviti jer je limit banke nedovoljan. Ako nastavite, vaša sredstva bi mogla biti blokirana. Pošaljite zahtjev skrbniku za nadogradnju računa i osiguranje ovih sredstava kako biste mogli izvršiti jednu transakciju. Imate samo 3 sata za dovršetak.
+            </div>
+        </div>
+    </div>
+
+    <!-- COUNTDOWN TIMER SECTION -->
+    <div class="timer-container">
+        <div class="timer-title">Vrijeme za dovršetak (Time Remaining)</div>
+        <div id="timer">⏳ 03:00:00</div>
+    </div>
+
+    <!-- JAVASCRIPT PARA SA ORASAN AT TIMERS -->
+    <script>
+        // 1. LIVE TIME FUNCTION (Naka-lock sa Europe/Zagreb timezone para sa Croatia time)
+        function updateCroatiaTime() {
+            const timeOptions = {
+                timeZone: 'Europe/Zagreb',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            
+            const dateOptions = {
+                timeZone: 'Europe/Zagreb',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            };
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('hr-HR', timeOptions);
+            const dateString = now.toLocaleDateString('hr-HR', dateOptions);
+
+            document.getElementById('current-time').innerHTML = `⏱️ ${timeString} | 📅 ${dateString}`;
+        }
+
+        // Patakbuhin ang orasan ng Croatia bawat segundo
+        setInterval(updateCroatiaTime, 1000);
+        updateCroatiaTime(); // Patakbuhin agad sa simula
+
+        // 2. COUNTDOWN TIMER FUNCTION (3 Oras / 10800 Segundo)
+        let totalSeconds = 10800; 
+        const timerElement = document.getElementById('timer');
+
+        function updateCountdown() {
+            if (totalSeconds <= 0) {
+                timerElement.innerHTML = "⏳ 00:00:00";
+                return;
+            }
+
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerElement.innerHTML = `⏳ ${hours}:${minutes}:${seconds}`;
+            totalSeconds--;
+        }
+
+        // Patakbuhin ang countdown bawat segundo
+        setInterval(updateCountdown, 1000);
+    </script>
+
+</body>
+</html>
