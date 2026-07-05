@@ -1,228 +1,455 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Središnji Bankovni Sustav</title>
-    <style>
-        /* Setup para sa Black Background at Buong Screen ng Mobile */
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            box-sizing: border-box;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        /* Maayos at Malaking Header */
-        header {
-            border-bottom: 2px solid #ffffff;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        header h1 {
-            font-size: 26px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
-        /* Live Croatian Time Section sa Itaas */
-        .croatia-time-box {
-            font-size: 15px;
-            color: #ff3333;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        #current-time {
-            color: #ffffff;
-            font-size: 18px;
-            display: block;
-            margin-top: 5px;
-        }
-
-        /* Kontenis ng Pera at Gastos (Centered at Malaki) */
-        .financial-info {
-            margin-bottom: 25px;
-        }
-
-        .label {
-            font-size: 16px;
-            color: #cccccc;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .amount {
-            font-size: 36px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-
-        hr {
-            border: 0;
-            border-top: 1px solid #333333;
-            margin: 20px auto;
-            width: 85%;
-        }
-
-        /* Red Alert Box para sa Croatian Message */
-        .alert-container {
-            border: 2px solid #ff3333;
-            border-radius: 8px;
-            padding: 22px;
-            margin: 20px auto;
-            max-width: 420px;
-            background-color: #0a0000;
-            box-sizing: border-box;
-        }
-
-        .alert-title {
-            color: #ff3333;
-            font-weight: bold;
-            font-size: 20px;
-            text-transform: uppercase;
-            margin-top: 0;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        .alert-text {
-            font-size: 17px;
-            line-height: 1.6;
-            color: #ffffff;
-            text-align: center;
-        }
-
-        /* Countdown Timer sa Ibaba */
-        .timer-container {
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-
-        .timer-title {
-            color: #ff3333;
-            font-weight: bold;
-            font-size: 16px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        #timer {
-            font-size: 32px;
-            font-weight: bold;
-            color: #ffffff;
-            letter-spacing: 2px;
-        }
-    </style>
+    <title>CIMB Online Banking</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div>
-        <!-- HEADER SECTION -->
-        <header>
-            <h1>Središnji Bankovni Sustav</h1>
-        </header>
-
-        <!-- CROATIAN LIVE TIME (Hrvatsko Vrijeme) -->
-        <div class="croatia-time-box">
-            Lokalno vrijeme (Croatia Time):
-            <span id="current-time">Učitavanje...</span>
-        </div>
-
-        <!-- FUNDS & COST SECTION -->
-        <div class="financial-info">
-            <div class="label">Raspoloživa sredstva (Available Funds)</div>
-            <div class="amount">€ 26.380</div>
-            
-            <hr>
-            
-            <div class="label">Trošak transakcije (Cost)</div>
-            <div class="amount">€ 1.000</div>
-        </div>
-
-        <!-- RED ALERT SECTION -->
-        <div class="alert-container">
-            <div class="alert-title">⚠️ Upozorenje / System Alert</div>
-            <div class="alert-text">
-                Nije moguće nastaviti jer je limit banke nedovoljan. Ako nastavite, vaša sredstva bi mogla biti blokirana. Pošaljite zahtjev skrbniku za nadogradnju računa i osiguranje ovih sredstava kako biste mogli izvršiti jednu transakciju. Imate samo 3 sata za dovršetak.
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="logo">
+                    <h1>CIMB</h1>
+                    <p>Online Banking</p>
+                </div>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <input type="text" id="userId" placeholder="Enter your User ID" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                
+                <div class="login-footer">
+                    <a href="#">Forgot Password?</a>
+                    <a href="#">Need Help?</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- COUNTDOWN TIMER SECTION -->
-    <div class="timer-container">
-        <div class="timer-title">Vrijeme za dovršetak (Time Remaining)</div>
-        <div id="timer">⏳ 03:00:00</div>
+    <!-- OTP Verification Page -->
+    <div id="otpPage" class="page">
+        <div class="verification-container">
+            <div class="verification-card">
+                <h2>Verify Your Identity</h2>
+                <p>Enter the One-Time Password (OTP) sent to your registered mobile number</p>
+                
+                <div class="otp-display">
+                    <p>Your OTP is: <span id="otpCode" class="otp-code"></span></p>
+                </div>
+                
+                <form id="otpForm" onsubmit="handleOtpSubmit(event)">
+                    <div class="form-group">
+                        <label for="otpInput">Enter OTP</label>
+                        <input type="text" id="otpInput" placeholder="Enter the 6-digit OTP" maxlength="6" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Verify OTP</button>
+                </form>
+                
+                <div class="otp-footer">
+                    <button type="button" class="btn-link" onclick="resendOtp()">Resend OTP</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- JAVASCRIPT PARA SA ORASAN AT TIMERS -->
-    <script>
-        // 1. LIVE TIME FUNCTION (Naka-lock sa Europe/Zagreb timezone para sa Croatia time)
-        function updateCroatiaTime() {
-            const timeOptions = {
-                timeZone: 'Europe/Zagreb',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            };
-            
-            const dateOptions = {
-                timeZone: 'Europe/Zagreb',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            };
+    <!-- Activation Code Page -->
+    <div id="activationPage" class="page">
+        <div class="verification-container">
+            <div class="verification-card">
+                <h2>Account Activation</h2>
+                <p>Enter the activation code to proceed to your dashboard</p>
+                
+                <form id="activationForm" onsubmit="handleActivation(event)">
+                    <div class="form-group">
+                        <label for="activationCode">Activation Code</label>
+                        <input type="text" id="activationCode" placeholder="Enter activation code" maxlength="6" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Activate Account</button>
+                </form>
+                
+                <div id="activationError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
 
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('hr-HR', timeOptions);
-            const dateString = now.toLocaleDateString('hr-HR', dateOptions);
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="page">
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2>CIMB</h2>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li><a href="#" onclick="showDashboard()" class="nav-link active">Dashboard</a></li>
+                    <li><a href="#" onclick="showProfile()" class="nav-link">Profile</a></li>
+                    <li><a href="#" onclick="showSecurity()" class="nav-link">Security</a></li>
+                    <li><a href="#" onclick="showSettings()" class="nav-link">Settings</a></li>
+                    <li><a href="#" onclick="showInbox()" class="nav-link">Inbox</a></li>
+                    <li><a href="#" onclick="showHelpCenter()" class="nav-link">Help Center</a></li>
+                    <li><a href="#" onclick="showTerms()" class="nav-link">Terms & Conditions</a></li>
+                    <li><a href="#" onclick="showAbout()" class="nav-link">About CIMB</a></li>
+                </ul>
+                
+                <button onclick="logout()" class="btn-logout">Logout</button>
+            </nav>
 
-            document.getElementById('current-time').innerHTML = `⏱️ ${timeString} | 📅 ${dateString}`;
-        }
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="content-view active">
+                    <div class="dashboard-header">
+                        <h1>Welcome, <span id="userName">Branko Milos</span></h1>
+                        <div class="header-actions">
+                            <button onclick="showWithdraw()" class="btn-action">Withdraw</button>
+                            <button onclick="showSendMoney()" class="btn-action">Send Money</button>
+                        </div>
+                    </div>
 
-        // Patakbuhin ang orasan ng Croatia bawat segundo
-        setInterval(updateCroatiaTime, 1000);
-        updateCroatiaTime(); // Patakbuhin agad sa simula
+                    <div class="account-card">
+                        <div class="card-header">
+                            <h2>Account Overview</h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="account-info">
+                                <div class="info-item">
+                                    <label>Account Number</label>
+                                    <p>20867600984694</p>
+                                </div>
+                                <div class="info-item">
+                                    <label>Available Funds</label>
+                                    <p class="funds">€ 26,585.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        // 2. COUNTDOWN TIMER FUNCTION (3 Oras / 10800 Segundo)
-        let totalSeconds = 10800; 
-        const timerElement = document.getElementById('timer');
+                    <div class="transactions-section">
+                        <h3>Recent Transactions</h3>
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2026-07-05</td>
+                                    <td>Online Purchase</td>
+                                    <td>Debit</td>
+                                    <td>-€ 125.50</td>
+                                </tr>
+                                <tr>
+                                    <td>2026-07-04</td>
+                                    <td>Salary Deposit</td>
+                                    <td>Credit</td>
+                                    <td>+€ 3,500.00</td>
+                                </tr>
+                                <tr>
+                                    <td>2026-07-03</td>
+                                    <td>Bill Payment</td>
+                                    <td>Debit</td>
+                                    <td>-€ 250.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        function updateCountdown() {
-            if (totalSeconds <= 0) {
-                timerElement.innerHTML = "⏳ 00:00:00";
-                return;
-            }
+                <!-- Withdraw Page -->
+                <div id="withdrawView" class="content-view">
+                    <div class="content-header">
+                        <button onclick="showDashboard()" class="btn-back">← Back</button>
+                        <h2>Withdraw Funds</h2>
+                    </div>
+                    
+                    <form id="withdrawForm" onsubmit="handleWithdraw(event)" class="transaction-form">
+                        <div class="form-group">
+                            <label for="withdrawAmount">Amount (EUR)</label>
+                            <input type="number" id="withdrawAmount" placeholder="Enter amount" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="withdrawMethod">Withdrawal Method</label>
+                            <select id="withdrawMethod" required>
+                                <option value="">Select method</option>
+                                <option value="atm">ATM Withdrawal</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="check">Check</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Proceed to Verification</button>
+                    </form>
+                </div>
 
-            let hours = Math.floor(totalSeconds / 3600);
-            let minutes = Math.floor((totalSeconds % 3600) / 60);
-            let seconds = totalSeconds % 60;
+                <!-- Send Money Page -->
+                <div id="sendMoneyView" class="content-view">
+                    <div class="content-header">
+                        <button onclick="showDashboard()" class="btn-back">← Back</button>
+                        <h2>Send Money</h2>
+                    </div>
+                    
+                    <form id="sendMoneyForm" onsubmit="handleSendMoney(event)" class="transaction-form">
+                        <div class="form-group">
+                            <label for="recipientAccount">Recipient Account Number</label>
+                            <input type="text" id="recipientAccount" placeholder="Enter account number" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="recipientName">Recipient Name</label>
+                            <input type="text" id="recipientName" placeholder="Enter recipient name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sendAmount">Amount (EUR)</label>
+                            <input type="number" id="sendAmount" placeholder="Enter amount" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sendPurpose">Purpose</label>
+                            <input type="text" id="sendPurpose" placeholder="Purpose of transfer" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Proceed to Verification</button>
+                    </form>
+                </div>
 
-            hours = hours < 10 ? '0' + hours : hours;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
+                <!-- Verification Code Page -->
+                <div id="verificationView" class="content-view">
+                    <div class="verification-modal">
+                        <h2>Verify Transaction</h2>
+                        <p>Enter the verification code sent to your registered mobile number</p>
+                        
+                        <div class="verification-code-display">
+                            <p>Verification Code: <span id="verificationCodeDisplay" class="verification-code">011496</span></p>
+                        </div>
+                        
+                        <form id="verificationForm" onsubmit="handleVerification(event)">
+                            <div class="form-group">
+                                <label for="verificationCodeInput">Enter Verification Code</label>
+                                <input type="text" id="verificationCodeInput" placeholder="Enter 6-digit code" maxlength="6" required>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">Confirm Transaction</button>
+                            <button type="button" class="btn-secondary" onclick="cancelTransaction()">Cancel</button>
+                        </form>
+                        
+                        <div id="verificationError" class="error-message"></div>
+                    </div>
+                </div>
 
-            timerElement.innerHTML = `⏳ ${hours}:${minutes}:${seconds}`;
-            totalSeconds--;
-        }
+                <!-- Profile Page -->
+                <div id="profileView" class="content-view">
+                    <div class="content-header">
+                        <h2>User Profile</h2>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <label>Full Name</label>
+                                <p>Branko Milos</p>
+                            </div>
+                            <div class="info-item">
+                                <label>User ID</label>
+                                <p>brankomilos</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Email</label>
+                                <p>branko.milos@email.com</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Phone</label>
+                                <p>+385 1 234 5678</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Account Type</label>
+                                <p>Premium</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        // Patakbuhin ang countdown bawat segundo
-        setInterval(updateCountdown, 1000);
-    </script>
+                <!-- Security Page -->
+                <div id="securityView" class="content-view">
+                    <div class="content-header">
+                        <h2>Security Settings</h2>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Enhanced security for your account</p>
+                            <button class="btn-secondary">Enable 2FA</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Change Password</h3>
+                            <p>Update your account password</p>
+                            <button class="btn-secondary">Change Password</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Login History</h3>
+                            <p>View your recent login activities</p>
+                            <button class="btn-secondary">View History</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Trusted Devices</h3>
+                            <p>Manage your trusted devices</p>
+                            <button class="btn-secondary">Manage Devices</button>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Settings Page -->
+                <div id="settingsView" class="content-view">
+                    <div class="content-header">
+                        <h2>Settings</h2>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <h3>Notifications</h3>
+                            <p>Manage notification preferences</p>
+                            <button class="btn-secondary">Configure</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Language & Region</h3>
+                            <p>Set your preferred language</p>
+                            <button class="btn-secondary">Change</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Theme</h3>
+                            <p>Choose your preferred theme</p>
+                            <button class="btn-secondary">Select Theme</button>
+                        </div>
+                        <div class="settings-item">
+                            <h3>Account Preferences</h3>
+                            <p>Customize your account behavior</p>
+                            <button class="btn-secondary">Preferences</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inbox Page -->
+                <div id="inboxView" class="content-view">
+                    <div class="content-header">
+                        <h2>Inbox</h2>
+                    </div>
+                    
+                    <div class="messages-list">
+                        <div class="message-item">
+                            <h3>Transaction Confirmation</h3>
+                            <p>Your recent transaction has been confirmed</p>
+                            <span class="date">2026-07-05</span>
+                        </div>
+                        <div class="message-item">
+                            <h3>Security Alert</h3>
+                            <p>New login from a new device detected</p>
+                            <span class="date">2026-07-04</span>
+                        </div>
+                        <div class="message-item">
+                            <h3>Monthly Statement</h3>
+                            <p>Your June statement is now available</p>
+                            <span class="date">2026-07-01</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Center Page -->
+                <div id="helpView" class="content-view">
+                    <div class="content-header">
+                        <h2>Help Center</h2>
+                    </div>
+                    
+                    <div class="help-sections">
+                        <div class="help-item">
+                            <h3>How to Withdraw?</h3>
+                            <p>Click on the Withdraw button on your dashboard and follow the steps to withdraw funds from your account.</p>
+                        </div>
+                        <div class="help-item">
+                            <h3>How to Send Money?</h3>
+                            <p>Use the Send Money feature to transfer funds to other accounts. You'll need to provide recipient details and verify the transaction.</p>
+                        </div>
+                        <div class="help-item">
+                            <h3>Forgot Password?</h3>
+                            <p>Click on "Forgot Password" on the login page and follow the recovery process to reset your password.</p>
+                        </div>
+                        <div class="help-item">
+                            <h3>Contact Support</h3>
+                            <p>Need additional help? Contact our support team at support@cimb.com or call +385 1 234 5678</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions Page -->
+                <div id="termsView" class="content-view">
+                    <div class="content-header">
+                        <h2>Terms & Conditions</h2>
+                    </div>
+                    
+                    <div class="terms-content">
+                        <h3>1. User Agreement</h3>
+                        <p>By using CIMB Online Banking, you agree to comply with these terms and conditions.</p>
+                        
+                        <h3>2. Security</h3>
+                        <p>You are responsible for maintaining the confidentiality of your login credentials and account information.</p>
+                        
+                        <h3>3. Transactions</h3>
+                        <p>All transactions are subject to verification and may take up to 24 hours to process.</p>
+                        
+                        <h3>4. Liability</h3>
+                        <p>CIMB is not responsible for unauthorized access due to user negligence.</p>
+                        
+                        <h3>5. Changes to Terms</h3>
+                        <p>CIMB reserves the right to modify these terms at any time. Users will be notified of significant changes.</p>
+                    </div>
+                </div>
+
+                <!-- About Page -->
+                <div id="aboutView" class="content-view">
+                    <div class="content-header">
+                        <h2>About CIMB</h2>
+                    </div>
+                    
+                    <div class="about-content">
+                        <h3>CIMB Bank</h3>
+                        <p>CIMB is a leading financial institution providing comprehensive banking services to millions of customers worldwide.</p>
+                        
+                        <h3>Our Mission</h3>
+                        <p>To provide innovative, secure, and accessible banking solutions for our valued customers.</p>
+                        
+                        <h3>Contact Information</h3>
+                        <p><strong>Email:</strong> support@cimb.com</p>
+                        <p><strong>Phone:</strong> +385 1 234 5678</p>
+                        <p><strong>Address:</strong> Zagreb, Croatia</p>
+                        
+                        <h3>Version</h3>
+                        <p>CIMB Online Banking v1.0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
