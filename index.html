@@ -3,452 +3,715 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIMB Online Banking</title>
+    <title>SecureBank - Online Banking Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-university"></i>
+                <span>SecureBank</span>
+            </div>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('accounts')">Accounts</a></li>
+                <li><a href="#" onclick="showSection('transfers')">Transfers</a></li>
+                <li><a href="#" onclick="showSection('cards')">Cards</a></li>
+                <li><a href="#" onclick="showSection('settings')">Settings</a></li>
+                <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
     <!-- Login Page -->
-    <div id="loginPage" class="page active">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="logo">
-                    <h1>CIMB</h1>
-                    <p>Online Banking</p>
+    <div id="loginSection" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-university"></i>
+                <h1>SecureBank</h1>
+                <p>Online Banking Platform</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginUsername">Username or Email</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" required>
                 </div>
-                
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="userId">User ID</label>
-                        <input type="text" id="userId" placeholder="Enter your User ID" required>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="#" onclick="toggleSignup()">Create Account</a>
+                <a href="#" onclick="toggleForgotPassword()">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupSection" class="auth-container" style="display:none;">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-user-plus"></i>
+                <h1>Create Account</h1>
+                <p>Join SecureBank Today</p>
+            </div>
+
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPhone">Phone Number</label>
+                    <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="#" onclick="toggleSignup()">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Page -->
+    <div id="forgotPasswordSection" class="auth-container" style="display:none;">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-lock"></i>
+                <h1>Reset Password</h1>
+                <p>Enter your email to reset password</p>
+            </div>
+
+            <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <input type="email" id="resetEmail" placeholder="Enter your email" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Send Reset Link</button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="#" onclick="toggleForgotPassword()">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardSection" class="main-container" style="display:none;">
+        <!-- Header with User Info -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <h1>Welcome, <span id="userName">Branko Milos</span>!</h1>
+                <p id="lastLogin">Last login: Today at 10:30 AM</p>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar">
+                    <div class="profile-info">
+                        <span class="user-name">Branko Milos</span>
+                        <span class="account-type">Premium Member</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Total Balance</p>
+                    <h2 class="stat-value">€ 26,585.00</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Monthly Spending</p>
+                    <h2 class="stat-value">€ 3,250.00</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Income</p>
+                    <h2 class="stat-value">€ 5,000.00</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Savings</p>
+                    <h2 class="stat-value">€ 12,500.00</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-btn" onclick="showSection('transfers')">
+                <i class="fas fa-paper-plane"></i>
+                <span>Send Money</span>
+            </button>
+            <button class="action-btn" onclick="showSection('accounts')">
+                <i class="fas fa-list"></i>
+                <span>View Accounts</span>
+            </button>
+            <button class="action-btn" onclick="showSection('cards')">
+                <i class="fas fa-credit-card"></i>
+                <span>Manage Cards</span>
+            </button>
+            <button class="action-btn" onclick="payBill()">
+                <i class="fas fa-receipt"></i>
+                <span>Pay Bills</span>
+            </button>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <a href="#" onclick="showSection('accounts')">View All</a>
+            </div>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026-07-05</td>
+                        <td>Online Shopping - Amazon</td>
+                        <td><span class="badge badge-debit">Debit</span></td>
+                        <td class="amount-debit">-€ 125.50</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>2026-07-04</td>
+                        <td>Salary Deposit - ABC Company</td>
+                        <td><span class="badge badge-credit">Credit</span></td>
+                        <td class="amount-credit">+€ 3,500.00</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>2026-07-03</td>
+                        <td>Utility Bill Payment</td>
+                        <td><span class="badge badge-debit">Debit</span></td>
+                        <td class="amount-debit">-€ 250.00</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>2026-07-01</td>
+                        <td>Transfer to Savings Account</td>
+                        <td><span class="badge badge-transfer">Transfer</span></td>
+                        <td class="amount-debit">-€ 1,000.00</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Accounts Section -->
+    <div id="accountsSection" class="main-container" style="display:none;">
+        <div class="section-header-main">
+            <h1>My Accounts</h1>
+            <button class="btn btn-primary" onclick="openAccountModal()">+ Open New Account</button>
+        </div>
+
+        <div class="accounts-grid">
+            <!-- Checking Account -->
+            <div class="account-card-large">
+                <div class="account-header">
+                    <div>
+                        <h3>Checking Account</h3>
+                        <p class="account-number">**** **** **** 4694</p>
                     </div>
-                    
-                    <button type="submit" class="btn-primary">Login</button>
-                </form>
-                
-                <div class="login-footer">
-                    <a href="#">Forgot Password?</a>
-                    <a href="#">Need Help?</a>
+                    <i class="fas fa-credit-card account-icon"></i>
+                </div>
+                <div class="account-balance">
+                    <span class="label">Available Balance</span>
+                    <h2>€ 15,250.00</h2>
+                </div>
+                <div class="account-footer">
+                    <button class="btn btn-sm btn-outline" onclick="viewAccountDetails('checking')">Details</button>
+                    <button class="btn btn-sm btn-outline" onclick="viewAccountTransactions('checking')">Transactions</button>
+                </div>
+            </div>
+
+            <!-- Savings Account -->
+            <div class="account-card-large">
+                <div class="account-header">
+                    <div>
+                        <h3>Savings Account</h3>
+                        <p class="account-number">**** **** **** 7891</p>
+                    </div>
+                    <i class="fas fa-piggy-bank account-icon"></i>
+                </div>
+                <div class="account-balance">
+                    <span class="label">Available Balance</span>
+                    <h2>€ 11,335.00</h2>
+                </div>
+                <div class="account-footer">
+                    <button class="btn btn-sm btn-outline" onclick="viewAccountDetails('savings')">Details</button>
+                    <button class="btn btn-sm btn-outline" onclick="viewAccountTransactions('savings')">Transactions</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Details Modal -->
+        <div id="accountDetailsModal" class="modal" style="display:none;">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h2>Account Details</h2>
+                    <button class="close-btn" onclick="closeModal('accountDetailsModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-row">
+                        <span class="detail-label">Account Type:</span>
+                        <span class="detail-value">Checking Account</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Account Number:</span>
+                        <span class="detail-value">20867600984694</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">IBAN:</span>
+                        <span class="detail-value">HR2390001111222333444</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">BIC:</span>
+                        <span class="detail-value">SABAHRBX</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Current Balance:</span>
+                        <span class="detail-value">€ 15,250.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Account Status:</span>
+                        <span class="detail-value"><span class="status-badge completed">Active</span></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- OTP Verification Page -->
-    <div id="otpPage" class="page">
-        <div class="verification-container">
-            <div class="verification-card">
-                <h2>Verify Your Identity</h2>
-                <p>Enter the One-Time Password (OTP) sent to your registered mobile number</p>
-                
-                <div class="otp-display">
-                    <p>Your OTP is: <span id="otpCode" class="otp-code"></span></p>
-                </div>
-                
-                <form id="otpForm" onsubmit="handleOtpSubmit(event)">
-                    <div class="form-group">
-                        <label for="otpInput">Enter OTP</label>
-                        <input type="text" id="otpInput" placeholder="Enter the 6-digit OTP" maxlength="6" required>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">Verify OTP</button>
-                </form>
-                
-                <div class="otp-footer">
-                    <button type="button" class="btn-link" onclick="resendOtp()">Resend OTP</button>
-                </div>
-            </div>
+    <!-- Transfers Section -->
+    <div id="transfersSection" class="main-container" style="display:none;">
+        <div class="section-header-main">
+            <h1>Send Money</h1>
         </div>
-    </div>
 
-    <!-- Activation Code Page -->
-    <div id="activationPage" class="page">
-        <div class="verification-container">
-            <div class="verification-card">
-                <h2>Account Activation</h2>
-                <p>Enter the activation code to proceed to your dashboard</p>
-                
-                <form id="activationForm" onsubmit="handleActivation(event)">
+        <div class="transfer-container">
+            <div class="transfer-form-card">
+                <h2>New Transfer</h2>
+                <form id="transferForm" onsubmit="handleTransfer(event)">
                     <div class="form-group">
-                        <label for="activationCode">Activation Code</label>
-                        <input type="text" id="activationCode" placeholder="Enter activation code" maxlength="6" required>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">Activate Account</button>
-                </form>
-                
-                <div id="activationError" class="error-message"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dashboard Page -->
-    <div id="dashboardPage" class="page">
-        <div class="dashboard-container">
-            <!-- Sidebar Navigation -->
-            <nav class="sidebar">
-                <div class="sidebar-header">
-                    <h2>CIMB</h2>
-                </div>
-                
-                <ul class="nav-menu">
-                    <li><a href="#" onclick="showDashboard()" class="nav-link active">Dashboard</a></li>
-                    <li><a href="#" onclick="showProfile()" class="nav-link">Profile</a></li>
-                    <li><a href="#" onclick="showSecurity()" class="nav-link">Security</a></li>
-                    <li><a href="#" onclick="showSettings()" class="nav-link">Settings</a></li>
-                    <li><a href="#" onclick="showInbox()" class="nav-link">Inbox</a></li>
-                    <li><a href="#" onclick="showHelpCenter()" class="nav-link">Help Center</a></li>
-                    <li><a href="#" onclick="showTerms()" class="nav-link">Terms & Conditions</a></li>
-                    <li><a href="#" onclick="showAbout()" class="nav-link">About CIMB</a></li>
-                </ul>
-                
-                <button onclick="logout()" class="btn-logout">Logout</button>
-            </nav>
-
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Dashboard View -->
-                <div id="dashboardView" class="content-view active">
-                    <div class="dashboard-header">
-                        <h1>Welcome, <span id="userName">Branko Milos</span></h1>
-                        <div class="header-actions">
-                            <button onclick="showWithdraw()" class="btn-action">Withdraw</button>
-                            <button onclick="showSendMoney()" class="btn-action">Send Money</button>
-                        </div>
+                        <label for="fromAccount">From Account</label>
+                        <select id="fromAccount" required>
+                            <option value="">Select account</option>
+                            <option value="checking">Checking Account - €15,250.00</option>
+                            <option value="savings">Savings Account - €11,335.00</option>
+                        </select>
                     </div>
 
-                    <div class="account-card">
-                        <div class="card-header">
-                            <h2>Account Overview</h2>
-                        </div>
-                        <div class="card-content">
-                            <div class="account-info">
-                                <div class="info-item">
-                                    <label>Account Number</label>
-                                    <p>20867600984694</p>
-                                </div>
-                                <div class="info-item">
-                                    <label>Available Funds</label>
-                                    <p class="funds">€ 26,585.00</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="transferType">Transfer Type</label>
+                        <select id="transferType" onchange="updateTransferFields()" required>
+                            <option value="">Select type</option>
+                            <option value="internal">Internal Transfer</option>
+                            <option value="domestic">Domestic Transfer</option>
+                            <option value="international">International Transfer</option>
+                        </select>
                     </div>
 
-                    <div class="transactions-section">
-                        <h3>Recent Transactions</h3>
-                        <table class="transactions-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Type</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2026-07-05</td>
-                                    <td>Online Purchase</td>
-                                    <td>Debit</td>
-                                    <td>-€ 125.50</td>
-                                </tr>
-                                <tr>
-                                    <td>2026-07-04</td>
-                                    <td>Salary Deposit</td>
-                                    <td>Credit</td>
-                                    <td>+€ 3,500.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2026-07-03</td>
-                                    <td>Bill Payment</td>
-                                    <td>Debit</td>
-                                    <td>-€ 250.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Withdraw Page -->
-                <div id="withdrawView" class="content-view">
-                    <div class="content-header">
-                        <button onclick="showDashboard()" class="btn-back">← Back</button>
-                        <h2>Withdraw Funds</h2>
-                    </div>
-                    
-                    <form id="withdrawForm" onsubmit="handleWithdraw(event)" class="transaction-form">
-                        <div class="form-group">
-                            <label for="withdrawAmount">Amount (EUR)</label>
-                            <input type="number" id="withdrawAmount" placeholder="Enter amount" step="0.01" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="withdrawMethod">Withdrawal Method</label>
-                            <select id="withdrawMethod" required>
-                                <option value="">Select method</option>
-                                <option value="atm">ATM Withdrawal</option>
-                                <option value="bank_transfer">Bank Transfer</option>
-                                <option value="check">Check</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary">Proceed to Verification</button>
-                    </form>
-                </div>
-
-                <!-- Send Money Page -->
-                <div id="sendMoneyView" class="content-view">
-                    <div class="content-header">
-                        <button onclick="showDashboard()" class="btn-back">← Back</button>
-                        <h2>Send Money</h2>
-                    </div>
-                    
-                    <form id="sendMoneyForm" onsubmit="handleSendMoney(event)" class="transaction-form">
+                    <div id="recipientFields">
                         <div class="form-group">
                             <label for="recipientAccount">Recipient Account Number</label>
                             <input type="text" id="recipientAccount" placeholder="Enter account number" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="recipientName">Recipient Name</label>
                             <input type="text" id="recipientName" placeholder="Enter recipient name" required>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="sendAmount">Amount (EUR)</label>
-                            <input type="number" id="sendAmount" placeholder="Enter amount" step="0.01" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="sendPurpose">Purpose</label>
-                            <input type="text" id="sendPurpose" placeholder="Purpose of transfer" required>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary">Proceed to Verification</button>
-                    </form>
-                </div>
 
-                <!-- Verification Code Page -->
-                <div id="verificationView" class="content-view">
-                    <div class="verification-modal">
-                        <h2>Verify Transaction</h2>
-                        <p>Enter the verification code sent to your registered mobile number</p>
-                        
-                        <div class="verification-code-display">
-                            <p>Verification Code: <span id="verificationCodeDisplay" class="verification-code">011496</span></p>
+                        <div class="form-group" id="recipientBankField" style="display:none;">
+                            <label for="recipientBank">Recipient Bank Name</label>
+                            <input type="text" id="recipientBank" placeholder="Enter bank name">
                         </div>
-                        
-                        <form id="verificationForm" onsubmit="handleVerification(event)">
-                            <div class="form-group">
-                                <label for="verificationCodeInput">Enter Verification Code</label>
-                                <input type="text" id="verificationCodeInput" placeholder="Enter 6-digit code" maxlength="6" required>
-                            </div>
-                            
-                            <button type="submit" class="btn-primary">Confirm Transaction</button>
-                            <button type="button" class="btn-secondary" onclick="cancelTransaction()">Cancel</button>
-                        </form>
-                        
-                        <div id="verificationError" class="error-message"></div>
                     </div>
-                </div>
 
-                <!-- Profile Page -->
-                <div id="profileView" class="content-view">
-                    <div class="content-header">
-                        <h2>User Profile</h2>
+                    <div class="form-group">
+                        <label for="transferAmount">Amount (EUR)</label>
+                        <input type="number" id="transferAmount" placeholder="0.00" step="0.01" required>
                     </div>
-                    
-                    <div class="profile-card">
-                        <div class="profile-info">
-                            <div class="info-item">
-                                <label>Full Name</label>
-                                <p>Branko Milos</p>
-                            </div>
-                            <div class="info-item">
-                                <label>User ID</label>
-                                <p>brankomilos</p>
-                            </div>
-                            <div class="info-item">
-                                <label>Email</label>
-                                <p>branko.milos@email.com</p>
-                            </div>
-                            <div class="info-item">
-                                <label>Phone</label>
-                                <p>+639613245435</p>
-                            </div>
-                            <div class="info-item">
-                                <label>Account Type</label>
-                                <p>Premium</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Security Page -->
-                <div id="securityView" class="content-view">
-                    <div class="content-header">
-                        <h2>Security Settings</h2>
+                    <div class="form-group">
+                        <label for="transferDescription">Description/Reference</label>
+                        <input type="text" id="transferDescription" placeholder="Enter transfer description" required>
                     </div>
-                    
-                    <div class="settings-list">
-                        <div class="settings-item">
-                            <h3>Two-Factor Authentication</h3>
-                            <p>Enhanced security for your account</p>
-                            <button class="btn-secondary">Enable 2FA</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Change Password</h3>
-                            <p>Update your account password</p>
-                            <button class="btn-secondary">Change Password</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Login History</h3>
-                            <p>View your recent login activities</p>
-                            <button class="btn-secondary">View History</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Trusted Devices</h3>
-                            <p>Manage your trusted devices</p>
-                            <button class="btn-secondary">Manage Devices</button>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Settings Page -->
-                <div id="settingsView" class="content-view">
-                    <div class="content-header">
-                        <h2>Settings</h2>
-                    </div>
-                    
-                    <div class="settings-list">
-                        <div class="settings-item">
-                            <h3>Notifications</h3>
-                            <p>Manage notification preferences</p>
-                            <button class="btn-secondary">Configure</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Language & Region</h3>
-                            <p>Set your preferred language</p>
-                            <button class="btn-secondary">Change</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Theme</h3>
-                            <p>Choose your preferred theme</p>
-                            <button class="btn-secondary">Select Theme</button>
-                        </div>
-                        <div class="settings-item">
-                            <h3>Account Preferences</h3>
-                            <p>Customize your account behavior</p>
-                            <button class="btn-secondary">Preferences</button>
-                        </div>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-primary btn-full">Continue to Review</button>
+                </form>
+            </div>
 
-                <!-- Inbox Page -->
-                <div id="inboxView" class="content-view">
-                    <div class="content-header">
-                        <h2>Inbox</h2>
-                    </div>
-                    
-                    <div class="messages-list">
-                        <div class="message-item">
-                            <h3>Transaction Confirmation</h3>
-                            <p>Your recent transaction has been confirmed</p>
-                            <span class="date">2026-07-05</span>
-                        </div>
-                        <div class="message-item">
-                            <h3>Security Alert</h3>
-                            <p>New login from a new device detected</p>
-                            <span class="date">2026-07-04</span>
-                        </div>
-                        <div class="message-item">
-                            <h3>Monthly Statement</h3>
-                            <p>Your June statement is now available</p>
-                            <span class="date">2026-07-01</span>
+            <!-- Recent Recipients -->
+            <div class="recipients-card">
+                <h3>Recent Recipients</h3>
+                <div class="recipient-list">
+                    <div class="recipient-item" onclick="selectRecipient('John Doe', '20867600984694')">
+                        <div class="recipient-avatar">JD</div>
+                        <div class="recipient-info">
+                            <p class="recipient-name">John Doe</p>
+                            <p class="recipient-account">**** **** 4694</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Help Center Page -->
-                <div id="helpView" class="content-view">
-                    <div class="content-header">
-                        <h2>Help Center</h2>
-                    </div>
-                    
-                    <div class="help-sections">
-                        <div class="help-item">
-                            <h3>How to Withdraw?</h3>
-                            <p>Click on the Withdraw button on your dashboard and follow the steps to withdraw funds from your account.</p>
+                    <div class="recipient-item" onclick="selectRecipient('Jane Smith', '20867600984695')">
+                        <div class="recipient-avatar">JS</div>
+                        <div class="recipient-info">
+                            <p class="recipient-name">Jane Smith</p>
+                            <p class="recipient-account">**** **** 4695</p>
                         </div>
-                        <div class="help-item">
-                            <h3>How to Send Money?</h3>
-                            <p>Use the Send Money feature to transfer funds to other accounts. You'll need to provide recipient details and verify the transaction.</p>
-                        </div>
-                        <div class="help-item">
-                            <h3>Forgot Password?</h3>
-                            <p>Click on "Forgot Password" on the login page and follow the recovery process to reset your password.</p>
-                        </div>
-                        <div class="help-item">
-                            <h3>Contact Support</h3>
-                            <p>Need additional help? Contact our support team at support@cimb.com or call +639613245435</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Terms & Conditions Page -->
-                <div id="termsView" class="content-view">
-                    <div class="content-header">
-                        <h2>Terms & Conditions</h2>
-                    </div>
-                    
-                    <div class="terms-content">
-                        <h3>1. User Agreement</h3>
-                        <p>By using CIMB Online Banking, you agree to comply with these terms and conditions.</p>
-                        
-                        <h3>2. Security</h3>
-                        <p>You are responsible for maintaining the confidentiality of your login credentials and account information.</p>
-                        
-                        <h3>3. Transactions</h3>
-                        <p>All transactions are subject to verification and may take up to 24 hours to process.</p>
-                        
-                        <h3>4. Liability</h3>
-                        <p>CIMB is not responsible for unauthorized access due to user negligence.</p>
-                        
-                        <h3>5. Changes to Terms</h3>
-                        <p>CIMB reserves the right to modify these terms at any time. Users will be notified of significant changes.</p>
-                    </div>
-                </div>
-
-                <!-- About Page -->
-                <div id="aboutView" class="content-view">
-                    <div class="content-header">
-                        <h2>About CIMB</h2>
-                    </div>
-                    
-                    <div class="about-content">
-                        <h3>CIMB Bank</h3>
-                        <p>CIMB is a leading financial institution providing comprehensive banking services to millions of customers worldwide.</p>
-                        
-                        <h3>Our Mission</h3>
-                        <p>To provide innovative, secure, and accessible banking solutions for our valued customers.</p>
-                        
-                        <h3>Contact Information</h3>
-                        <p><strong>Email:</strong> support@cimb.com</p>
-                        <p><strong>Phone:</strong> +639613245435</p>
-                        <p><strong>Address:</strong>PH</p>
-                        
-                        <h3>Version</h3>
-                        <p>CIMB Online Banking v1.0</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Transfer Confirmation Modal -->
+        <div id="transferConfirmModal" class="modal" style="display:none;">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h2>Review Transfer</h2>
+                    <button class="close-btn" onclick="closeModal('transferConfirmModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-row">
+                        <span class="detail-label">From Account:</span>
+                        <span class="detail-value" id="confirmFromAccount">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">To Account:</span>
+                        <span class="detail-value" id="confirmToAccount">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Recipient Name:</span>
+                        <span class="detail-value" id="confirmRecipientName">-</span>
+                    </div>
+                    <div class="detail-row highlight">
+                        <span class="detail-label">Amount:</span>
+                        <span class="detail-value" id="confirmAmount">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value" id="confirmDescription">-</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('transferConfirmModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="confirmTransfer()">Confirm & Send</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Cards Section -->
+    <div id="cardsSection" class="main-container" style="display:none;">
+        <div class="section-header-main">
+            <h1>My Cards</h1>
+            <button class="btn btn-primary" onclick="openCardModal()">+ Request New Card</button>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Debit Card -->
+            <div class="card-display">
+                <div class="card-inner">
+                    <div class="card-chip">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="card-brand">
+                        <i class="fab fa-cc-visa"></i>
+                    </div>
+                    <div class="card-number">4532 •••• •••• 8694</div>
+                    <div class="card-footer">
+                        <div class="card-holder">Branko Milos</div>
+                        <div class="card-expiry">07/28</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline" onclick="toggleCard()">Lock/Unlock</button>
+                    <button class="btn btn-sm btn-outline" onclick="viewCardDetails()">Details</button>
+                </div>
+            </div>
+
+            <!-- Credit Card -->
+            <div class="card-display">
+                <div class="card-inner credit-card">
+                    <div class="card-chip">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="card-brand">
+                        <i class="fab fa-cc-mastercard"></i>
+                    </div>
+                    <div class="card-number">5412 •••• •••• 1234</div>
+                    <div class="card-footer">
+                        <div class="card-holder">Branko Milos</div>
+                        <div class="card-expiry">03/27</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-outline" onclick="toggleCard()">Lock/Unlock</button>
+                    <button class="btn btn-sm btn-outline" onclick="viewCardDetails()">Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Transactions -->
+        <div class="section-card" style="margin-top: 30px;">
+            <div class="section-header">
+                <h2>Card Transactions</h2>
+            </div>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Merchant</th>
+                        <th>Card</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026-07-05</td>
+                        <td>Starbucks Coffee</td>
+                        <td>Visa ••••8694</td>
+                        <td>-€ 5.50</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>2026-07-04</td>
+                        <td>Shell Gas Station</td>
+                        <td>Mastercard ••••1234</td>
+                        <td>-€ 65.00</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div id="settingsSection" class="main-container" style="display:none;">
+        <div class="section-header-main">
+            <h1>Settings</h1>
+        </div>
+
+        <div class="settings-container">
+            <!-- Profile Settings -->
+            <div class="settings-card">
+                <h2><i class="fas fa-user"></i> Profile Settings</h2>
+                <form id="profileForm" onsubmit="handleProfileUpdate(event)">
+                    <div class="form-group">
+                        <label for="settingsName">Full Name</label>
+                        <input type="text" id="settingsName" value="Branko Milos" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingsEmail">Email Address</label>
+                        <input type="email" id="settingsEmail" value="branko.milos@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingsPhone">Phone Number</label>
+                        <input type="tel" id="settingsPhone" value="+639613245435" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-card">
+                <h2><i class="fas fa-lock"></i> Security Settings</h2>
+                <div class="security-list">
+                    <div class="security-item">
+                        <div>
+                            <h3>Change Password</h3>
+                            <p>Update your account password</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="openPasswordModal()">Change</button>
+                    </div>
+                    <div class="security-item">
+                        <div>
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <button class="btn btn-outline">Enable</button>
+                    </div>
+                    <div class="security-item">
+                        <div>
+                            <h3>Login History</h3>
+                            <p>View your recent login activities</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="viewLoginHistory()">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="settings-card">
+                <h2><i class="fas fa-bell"></i> Notification Settings</h2>
+                <div class="notification-list">
+                    <div class="notification-item">
+                        <div>
+                            <h3>Email Notifications</h3>
+                            <p>Receive alerts via email</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <h3>SMS Notifications</h3>
+                            <p>Receive alerts via SMS</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <h3>Transaction Alerts</h3>
+                            <p>Get notified of all transactions</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="settings-card">
+                <h2><i class="fas fa-cog"></i> Preferences</h2>
+                <div class="form-group">
+                    <label for="preferredLanguage">Language</label>
+                    <select id="preferredLanguage">
+                        <option value="en">English</option>
+                        <option value="hr">Croatian</option>
+                        <option value="de">German</option>
+                        <option value="tl">Tagalog</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredCurrency">Preferred Currency</label>
+                    <select id="preferredCurrency">
+                        <option value="eur">EUR (€)</option>
+                        <option value="usd">USD ($)</option>
+                        <option value="gbp">GBP (£)</option>
+                        <option value="php">PHP (₱)</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="savePreferences()">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Change Password</h2>
+                <button class="close-btn" onclick="closeModal('passwordModal')">&times;</button>
+            </div>
+            <form id="passwordForm" onsubmit="handlePasswordChange(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password</label>
+                        <input type="password" id="confirmNewPassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification"></div>
 
     <script src="script.js"></script>
 </body>
