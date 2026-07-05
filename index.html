@@ -19,7 +19,6 @@
                 <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
                 <li><a href="#" onclick="showSection('accounts')">Accounts</a></li>
                 <li><a href="#" onclick="showSection('transfers')">Transfers</a></li>
-                <li><a href="#" onclick="showSection('cards')">Cards</a></li>
                 <li><a href="#" onclick="showSection('settings')">Settings</a></li>
                 <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
             </ul>
@@ -30,6 +29,30 @@
             </div>
         </div>
     </nav>
+
+    <!-- Activation Modal -->
+    <div id="activationSection" class="auth-container" style="display:none;">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-lock"></i>
+                <h1>Account Activation</h1>
+                <p>Enter the activation code sent to your email</p>
+            </div>
+
+            <form onsubmit="handleActivation(event)">
+                <div class="form-group">
+                    <label for="activationCode">Activation Code</label>
+                    <input type="text" id="activationCode" placeholder="Enter 6-digit code" maxlength="6" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Activate Account</button>
+            </form>
+
+            <div class="auth-footer" style="justify-content: center;">
+                <p style="color: var(--text-light); font-size: 0.9rem;">Code: 082815</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Login Page -->
     <div id="loginSection" class="auth-container">
@@ -160,38 +183,8 @@
                     <i class="fas fa-wallet"></i>
                 </div>
                 <div class="stat-content">
-                    <p class="stat-label">Total Balance</p>
-                    <h2 class="stat-value">€ 26,585.00</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <i class="fas fa-exchange-alt"></i>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Monthly Spending</p>
-                    <h2 class="stat-value">€ 3,250.00</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <i class="fas fa-arrow-up"></i>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Income</p>
-                    <h2 class="stat-value">€ 5,000.00</h2>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                    <i class="fas fa-piggy-bank"></i>
-                </div>
-                <div class="stat-content">
-                    <p class="stat-label">Savings</p>
-                    <h2 class="stat-value">€ 12,500.00</h2>
+                    <p class="stat-label">Savings Balance</p>
+                    <h2 class="stat-value" id="totalBalance">€ 26,585.00</h2>
                 </div>
             </div>
         </div>
@@ -205,14 +198,6 @@
             <button class="action-btn" onclick="showSection('accounts')">
                 <i class="fas fa-list"></i>
                 <span>View Accounts</span>
-            </button>
-            <button class="action-btn" onclick="showSection('cards')">
-                <i class="fas fa-credit-card"></i>
-                <span>Manage Cards</span>
-            </button>
-            <button class="action-btn" onclick="payBill()">
-                <i class="fas fa-receipt"></i>
-                <span>Pay Bills</span>
             </button>
         </div>
 
@@ -233,34 +218,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2026-07-05</td>
-                        <td>Online Shopping - Amazon</td>
-                        <td><span class="badge badge-debit">Debit</span></td>
-                        <td class="amount-debit">-€ 125.50</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>2026-07-04</td>
-                        <td>Salary Deposit - ABC Company</td>
-                        <td><span class="badge badge-credit">Credit</span></td>
-                        <td class="amount-credit">+€ 3,500.00</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>2026-07-03</td>
-                        <td>Utility Bill Payment</td>
-                        <td><span class="badge badge-debit">Debit</span></td>
-                        <td class="amount-debit">-€ 250.00</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>2026-07-01</td>
-                        <td>Transfer to Savings Account</td>
-                        <td><span class="badge badge-transfer">Transfer</span></td>
-                        <td class="amount-debit">-€ 1,000.00</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
+                    <!-- Dynamically populated -->
                 </tbody>
             </table>
         </div>
@@ -270,29 +228,9 @@
     <div id="accountsSection" class="main-container" style="display:none;">
         <div class="section-header-main">
             <h1>My Accounts</h1>
-            <button class="btn btn-primary" onclick="openAccountModal()">+ Open New Account</button>
         </div>
 
         <div class="accounts-grid">
-            <!-- Checking Account -->
-            <div class="account-card-large">
-                <div class="account-header">
-                    <div>
-                        <h3>Checking Account</h3>
-                        <p class="account-number">**** **** **** 4694</p>
-                    </div>
-                    <i class="fas fa-credit-card account-icon"></i>
-                </div>
-                <div class="account-balance">
-                    <span class="label">Available Balance</span>
-                    <h2>€ 15,250.00</h2>
-                </div>
-                <div class="account-footer">
-                    <button class="btn btn-sm btn-outline" onclick="viewAccountDetails('checking')">Details</button>
-                    <button class="btn btn-sm btn-outline" onclick="viewAccountTransactions('checking')">Transactions</button>
-                </div>
-            </div>
-
             <!-- Savings Account -->
             <div class="account-card-large">
                 <div class="account-header">
@@ -304,7 +242,7 @@
                 </div>
                 <div class="account-balance">
                     <span class="label">Available Balance</span>
-                    <h2>€ 11,335.00</h2>
+                    <h2 id="savingsBalance">€ 26,585.00</h2>
                 </div>
                 <div class="account-footer">
                     <button class="btn btn-sm btn-outline" onclick="viewAccountDetails('savings')">Details</button>
@@ -323,11 +261,11 @@
                 <div class="modal-body">
                     <div class="detail-row">
                         <span class="detail-label">Account Type:</span>
-                        <span class="detail-value">Checking Account</span>
+                        <span class="detail-value">Savings Account</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Account Number:</span>
-                        <span class="detail-value">20867600984694</span>
+                        <span class="detail-value">20867600984891</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">IBAN:</span>
@@ -339,7 +277,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Current Balance:</span>
-                        <span class="detail-value">€ 15,250.00</span>
+                        <span class="detail-value" id="modalBalance">€ 26,585.00</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Account Status:</span>
@@ -360,15 +298,6 @@
             <div class="transfer-form-card">
                 <h2>New Transfer</h2>
                 <form id="transferForm" onsubmit="handleTransfer(event)">
-                    <div class="form-group">
-                        <label for="fromAccount">From Account</label>
-                        <select id="fromAccount" required>
-                            <option value="">Select account</option>
-                            <option value="checking">Checking Account - €15,250.00</option>
-                            <option value="savings">Savings Account - €11,335.00</option>
-                        </select>
-                    </div>
-
                     <div class="form-group">
                         <label for="transferType">Transfer Type</label>
                         <select id="transferType" onchange="updateTransferFields()" required>
@@ -432,6 +361,29 @@
             </div>
         </div>
 
+        <!-- Verification Code Modal -->
+        <div id="verificationCodeModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Verify Transfer</h2>
+                    <button class="close-btn" onclick="closeModal('verificationCodeModal')">&times;</button>
+                </div>
+                <form onsubmit="handleVerificationCode(event)">
+                    <div class="modal-body">
+                        <p style="margin-bottom: 1rem; color: var(--text-light);">Enter the verification code sent to your registered email</p>
+                        <div class="form-group">
+                            <label for="verificationCode">Verification Code</label>
+                            <input type="text" id="verificationCode" placeholder="Enter 6-digit code" maxlength="6" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('verificationCodeModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Verify</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Transfer Confirmation Modal -->
         <div id="transferConfirmModal" class="modal" style="display:none;">
             <div class="modal-content modal-lg">
@@ -442,7 +394,7 @@
                 <div class="modal-body">
                     <div class="detail-row">
                         <span class="detail-label">From Account:</span>
-                        <span class="detail-value" id="confirmFromAccount">-</span>
+                        <span class="detail-value">Savings Account</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">To Account:</span>
@@ -466,92 +418,6 @@
                     <button class="btn btn-primary" onclick="confirmTransfer()">Confirm & Send</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Cards Section -->
-    <div id="cardsSection" class="main-container" style="display:none;">
-        <div class="section-header-main">
-            <h1>My Cards</h1>
-            <button class="btn btn-primary" onclick="openCardModal()">+ Request New Card</button>
-        </div>
-
-        <div class="cards-grid">
-            <!-- Debit Card -->
-            <div class="card-display">
-                <div class="card-inner">
-                    <div class="card-chip">
-                        <i class="fas fa-microchip"></i>
-                    </div>
-                    <div class="card-brand">
-                        <i class="fab fa-cc-visa"></i>
-                    </div>
-                    <div class="card-number">4532 •••• •••• 8694</div>
-                    <div class="card-footer">
-                        <div class="card-holder">Branko Milos</div>
-                        <div class="card-expiry">07/28</div>
-                    </div>
-                </div>
-                <div class="card-actions">
-                    <button class="btn btn-sm btn-outline" onclick="toggleCard()">Lock/Unlock</button>
-                    <button class="btn btn-sm btn-outline" onclick="viewCardDetails()">Details</button>
-                </div>
-            </div>
-
-            <!-- Credit Card -->
-            <div class="card-display">
-                <div class="card-inner credit-card">
-                    <div class="card-chip">
-                        <i class="fas fa-microchip"></i>
-                    </div>
-                    <div class="card-brand">
-                        <i class="fab fa-cc-mastercard"></i>
-                    </div>
-                    <div class="card-number">5412 •••• •••• 1234</div>
-                    <div class="card-footer">
-                        <div class="card-holder">Branko Milos</div>
-                        <div class="card-expiry">03/27</div>
-                    </div>
-                </div>
-                <div class="card-actions">
-                    <button class="btn btn-sm btn-outline" onclick="toggleCard()">Lock/Unlock</button>
-                    <button class="btn btn-sm btn-outline" onclick="viewCardDetails()">Details</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card Transactions -->
-        <div class="section-card" style="margin-top: 30px;">
-            <div class="section-header">
-                <h2>Card Transactions</h2>
-            </div>
-            <table class="transactions-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Merchant</th>
-                        <th>Card</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2026-07-05</td>
-                        <td>Starbucks Coffee</td>
-                        <td>Visa ••••8694</td>
-                        <td>-€ 5.50</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>2026-07-04</td>
-                        <td>Shell Gas Station</td>
-                        <td>Mastercard ••••1234</td>
-                        <td>-€ 65.00</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
