@@ -2,6 +2,7 @@
 let currentUser = null;
 let isLoggedIn = false;
 let transferData = {};
+let activationVerified = false;
 
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -21,7 +22,37 @@ function checkAuthStatus() {
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
         isLoggedIn = true;
+        const verified = localStorage.getItem('activationVerified');
+        if (verified === 'true') {
+            activationVerified = true;
+            showLoggedInUI();
+            showSection('dashboard');
+        } else {
+            showActivationModal();
+        }
+    }
+}
+
+// ========== ACTIVATION CODE ==========
+function showActivationModal() {
+    document.getElementById('activationSection').style.display = 'flex';
+    document.getElementById('navbar').style.display = 'none';
+}
+
+function handleActivation(event) {
+    event.preventDefault();
+    const code = document.getElementById('activationCode').value;
+
+    if (code === '082815') {
+        activationVerified = true;
+        localStorage.setItem('activationVerified', 'true');
+        document.getElementById('activationSection').style.display = 'none';
         showLoggedInUI();
+        showSection('dashboard');
+        showNotification('Account activated successfully!', 'success');
+    } else {
+        showNotification('Invalid activation code', 'error');
+        document.getElementById('activationCode').value = '';
     }
 }
 
@@ -49,7 +80,8 @@ function handleLogin(event) {
         email: 'branko.milos@email.com',
         phone: '+385 1 234 5678',
         accountType: 'Premium',
-        lastLogin: new Date().toLocaleString()
+        lastLogin: new Date().toLocaleString(),
+        savingsBalance: 26585.00
     };
 
     isLoggedIn = true;
@@ -57,8 +89,8 @@ function handleLogin(event) {
     showNotification('Login successful!', 'success');
 
     setTimeout(() => {
-        showLoggedInUI();
-        showSection('dashboard');
+        document.getElementById('loginSection').style.display = 'none';
+        showActivationModal();
     }, 1000);
 }
 
@@ -86,7 +118,8 @@ function handleSignup(event) {
         username: email.split('@')[0],
         email: email,
         phone: phone,
-        accountType: 'Standard'
+        accountType: 'Standard',
+        savingsBalance: 0
     };
 
     isLoggedIn = true;
@@ -94,8 +127,8 @@ function handleSignup(event) {
     showNotification('Account created successfully!', 'success');
 
     setTimeout(() => {
-        showLoggedInUI();
-        showSection('dashboard');
+        document.getElementById('signupSection').style.display = 'none';
+        showActivationModal();
     }, 1000);
 }
 
@@ -111,7 +144,9 @@ function logout() {
     if (confirm('Are you sure you want to logout?')) {
         isLoggedIn = false;
         currentUser = null;
+        activationVerified = false;
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('activationVerified');
         showNotification('Logged out successfully', 'success');
 
         setTimeout(() => {
@@ -155,8 +190,7 @@ function updateNavbarActive(sectionName) {
         'dashboard': 0,
         'accounts': 1,
         'transfers': 2,
-        'cards': 3,
-        'settings': 4
+        'settings': 3
     };
 
     if (sections[sectionName] !== undefined) {
@@ -188,13 +222,12 @@ function toggleMobileMenu() {
 function handleTransfer(event) {
     event.preventDefault();
 
-    const fromAccount = document.getElementById('fromAccount').value;
     const recipientAccount = document.getElementById('recipientAccount').value;
     const recipientName = document.getElementById('recipientName').value;
     const amount = document.getElementById('transferAmount').value;
     const description = document.getElementById('transferDescription').value;
 
-    if (!fromAccount || !recipientAccount || !recipientName || !amount || !description) {
+    if (!recipientAccount || !recipientName || !amount || !description) {
         showNotification('Please fill in all fields', 'error');
         return;
     }
@@ -204,27 +237,63 @@ function handleTransfer(event) {
         return;
     }
 
+    if (parseFloat(amount) > currentUser.savingsBalance) {
+        showNotification('Insufficient funds', 'error');
+        return;
+    }
+
     transferData = {
-        fromAccount: fromAccount,
         toAccount: recipientAccount,
         recipientName: recipientName,
         amount: amount,
         description: description
     };
 
-    // Show confirmation modal
-    document.getElementById('confirmFromAccount').textContent = 'Checking Account';
-    document.getElementById('confirmToAccount').textContent = recipientAccount;
-    document.getElementById('confirmRecipientName').textContent = recipientName;
-    document.getElementById('confirmAmount').textContent = '€ ' + parseFloat(amount).toFixed(2);
-    document.getElementById('confirmDescription').textContent = description;
+    // Show verification code modal
+    document.getElementById('verificationCode').value = '';
+    openModal('verificationCodeModal');
+}
 
-    openModal('transferConfirmModal');
+function handleVerificationCode(event) {
+    event.preventDefault();
+    const code = document.getElementById('verificationCode').value;
+
+    if (code === '011496') {
+        closeModal('verificationCodeModal');
+        
+        // Show confirmation modal
+        document.getElementById('confirmToAccount').textContent = transferData.toAccount;
+        document.getElementById('confirmRecipientName').textContent = transferData.recipientName;
+        document.getElementById('confirmAmount').textContent = '€ ' + parseFloat(transferData.amount).toFixed(2);
+        document.getElementById('confirmDescription').textContent = transferData.description;
+
+        openModal('transferConfirmModal');
+    } else {
+        showNotification('Invalid verification code', 'error');
+        document.getElementById('verificationCode').value = '';
+    }
 }
 
 function confirmTransfer() {
     closeModal('transferConfirmModal');
-    showNotification('Transfer successful! Transaction ID: TXN' + Math.floor(Math.random() * 1000000), 'success');
+    
+    // Deduct amount from savings
+    currentUser.savingsBalance -= parseFloat(transferData.amount);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    // Add transaction to history
+    const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+    transactions.unshift({
+        date: new Date().toISOString().split('T')[0],
+        description: 'Transfer to ' + transferData.recipientName,
+        type: 'Transfer',
+        amount: '-€ ' + parseFloat(transferData.amount).toFixed(2),
+        status: 'Completed'
+    });
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    const transactionId = 'TXN' + Math.floor(Math.random() * 1000000);
+    showNotification('Transfer successful! Transaction ID: ' + transactionId, 'success');
 
     // Reset form
     document.getElementById('transferForm').reset();
@@ -260,20 +329,7 @@ function viewAccountDetails(accountType) {
 
 function viewAccountTransactions(accountType) {
     showSection('accounts');
-    showNotification('Viewing transactions for ' + accountType + ' account', 'info');
-}
-
-// ========== CARDS ==========
-function openCardModal() {
-    showNotification('Card request feature coming soon', 'info');
-}
-
-function toggleCard() {
-    showNotification('Card locked/unlocked successfully', 'success');
-}
-
-function viewCardDetails() {
-    showNotification('Card Details: Visa Debit Card\nExpiry: 07/28\nStatus: Active', 'info');
+    showNotification('Viewing transactions for Savings account', 'info');
 }
 
 // ========== SETTINGS ==========
@@ -332,10 +388,6 @@ function savePreferences() {
     showNotification('Preferences saved successfully', 'success');
 }
 
-function payBill() {
-    showNotification('Bill payment feature coming soon', 'info');
-}
-
 // ========== MODAL FUNCTIONS ==========
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -387,7 +439,6 @@ function formatDate(date) {
 
 // ========== ADDITIONAL FEATURES ==========
 function addEventListenersToModals() {
-    // Close modal when clicking on close button
     const closeButtons = document.querySelectorAll('.close-btn');
     closeButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -401,11 +452,6 @@ function addEventListenersToModals() {
 
 // Initialize modal listeners
 document.addEventListener('DOMContentLoaded', addEventListenersToModals);
-
-// ========== EXPORT STATEMENT ==========
-function exportStatement() {
-    showNotification('Statement exported to PDF', 'success');
-}
 
 // ========== SEARCH FUNCTIONALITY ==========
 function searchTransactions(query) {
@@ -447,41 +493,51 @@ showSection = function(sectionName) {
     originalShowSection(sectionName);
     if (sectionName === 'dashboard') {
         initializeDashboard();
+        loadTransactions();
     }
 }
 
-// ========== ADVANCED SECURITY ==========
-function enableTwoFactorAuth() {
-    showNotification('Two-Factor Authentication enabled successfully', 'success');
-}
-
-function disableTwoFactorAuth() {
-    showNotification('Two-Factor Authentication disabled', 'success');
-}
-
-// ========== QUICK STATS UPDATE ==========
-function updateStatistics() {
-    // This would normally fetch from an API
-    const stats = {
-        totalBalance: 26585.00,
-        monthlySpending: 3250.00,
-        income: 5000.00,
-        savings: 12500.00
-    };
-    return stats;
-}
-
-// ========== RESPONSIVE ADJUSTMENTS ==========
-function handleResponsive() {
-    if (window.innerWidth <= 768) {
-        const navbar = document.querySelector('.navbar-menu');
-        if (navbar) {
-            navbar.style.display = 'none';
-        }
+// ========== LOAD TRANSACTIONS ==========
+function loadTransactions() {
+    const tbody = document.querySelector('.transactions-table tbody');
+    const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+    
+    tbody.innerHTML = '';
+    
+    // Add initial transaction
+    if (transactions.length === 0) {
+        const initialTransaction = {
+            date: '2026-07-05',
+            description: 'Initial Deposit',
+            type: 'Credit',
+            amount: '+€ 26,585.00',
+            status: 'Completed'
+        };
+        tbody.innerHTML += `
+            <tr>
+                <td>${initialTransaction.date}</td>
+                <td>${initialTransaction.description}</td>
+                <td><span class="badge badge-credit">Credit</span></td>
+                <td class="amount-credit">${initialTransaction.amount}</td>
+                <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+        `;
+    } else {
+        transactions.forEach(tx => {
+            const badgeClass = tx.type === 'Transfer' ? 'badge-transfer' : (tx.amount.startsWith('+') ? 'badge-credit' : 'badge-debit');
+            const amountClass = tx.amount.startsWith('+') ? 'amount-credit' : 'amount-debit';
+            tbody.innerHTML += `
+                <tr>
+                    <td>${tx.date}</td>
+                    <td>${tx.description}</td>
+                    <td><span class="badge ${badgeClass}">${tx.type}</span></td>
+                    <td class="${amountClass}">${tx.amount}</td>
+                    <td><span class="status-badge completed">${tx.status}</span></td>
+                </tr>
+            `;
+        });
     }
 }
-
-window.addEventListener('resize', handleResponsive);
 
 // ========== SESSION TIMEOUT ==========
 let sessionTimeout;
@@ -502,7 +558,6 @@ document.addEventListener('click', resetSessionTimeout);
 
 // ========== DATA ENCRYPTION PLACEHOLDER ==========
 function encryptSensitiveData(data) {
-    // In a real application, use proper encryption
     return btoa(JSON.stringify(data));
 }
 
